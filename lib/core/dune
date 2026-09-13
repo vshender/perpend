@@ -1,0 +1,3 @@
+(library
+ (name perpend_core)
+ (public_name perpend.core))
