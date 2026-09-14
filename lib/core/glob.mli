@@ -45,40 +45,56 @@ val to_string : t -> string
 (** {1 Matching} *)
 
 val matches : t -> Path.t -> bool
-(** [matches p path] is [true] iff [p] describes [path] as documented
-    above. *)
+(** [matches p path] is [true] iff [p] describes [path] as documented above. *)
 
 
 (** {1 Specificity} *)
 
-(** When several patterns match one path, the more specific one wins.  The
-    type is abstract, so the order can change without touching callers.
+(** Several patterns can match one path.  Specificity tells which of two
+    patterns describes a path more closely, so that one of them can be
+    chosen.  It is defined by two questions asked in turn.
 
-    The current order compares, in turn:
+    - Does exactly one pattern include the other?  Then the included one is more
+      specific, whatever its shape: ["src/db/migrations/**"] beats
+      ["**/migrations/**"], and ["**/*.test.ts"] beats ["**/*.ts"].
+    - Otherwise, is exactly one of them cross-cutting?  A cross-cutting pattern
+      has a literal after a wildcard, so some name in it is not tied to a fixed
+      place: ["**/__tests__/**"], ["*/migrations/**"] and ["**/*.test.ts"] are
+      cross-cutting, ["src/core/**"] and ["src/plugins/*/**"] are not.
+      ["**/__tests__/**"] selects the tests wherever they are, and it beats a
+      pattern that only names a place, such as ["src/ui/hooks/**"].
 
-    - whether the pattern has no wildcards, so that a pattern naming exactly
-      the path beats every other pattern;
-    - the number of literal characters after the first wildcard.  These
-      are not anchored to the repository root, so [**/*.test.ts] and
-      [**/__tests__/**] beat [src/ui/hooks/**] at any depth;
-    - the number of literal characters before the first wildcard.  These
-      are anchored to the repository root;
-    - whether the pattern has no ["**"], so that a fixed depth beats any
-      depth.
+    Every other pair is ambiguous: ["**/__tests__/**"] and ["**/*.test.ts"] both
+    match [src/__tests__/a.test.ts], and neither question tells them apart.  No
+    rule on the patterns alone can settle such a pair: which one should win
+    depends on what their author meant.  The author says so with a pattern for
+    the overlap, here ["**/__tests__/**/*.test.ts"]: both patterns include it,
+    so by inclusion it beats either.
 
-    Characters are counted as bytes; separators are not counted.  Patterns
-    with equal specificity are a tie, which the caller reports. *)
-module Specificity : sig
-  type t
-  (** The type of pattern specificity. *)
+    Specificity is not an order.  A pattern can be more specific than a second
+    one, and the second than a third, while the first and the third are
+    ambiguous, for example ["src/a/**"], ["**/a/**"] and ["src/*/*"].  It does
+    not sort patterns; among several, the most specific one is the one that no
+    other beats, if there is exactly one. *)
 
-  val compare : t -> t -> int
-  (** [compare a b] is negative if [a] is less specific than [b], zero if
-      they tie, positive otherwise. *)
+(** Why one pattern is more specific than another. *)
+type reason =
+  | Included
+  (** It is included in the other pattern. *)
+  | Cross_cutting
+  (** Neither includes the other; it is cross-cutting and the other is not. *)
 
-  val to_string : t -> string
-  (** [to_string s] renders [s] for diagnostics. *)
-end
+(** How two patterns compare. *)
+type specificity =
+  | More_specific of reason
+  (** The first pattern is more specific. *)
+  | Less_specific of reason
+  (** The second pattern is more specific. *)
+  | Ambiguous
+  (** Neither is: the two match the same paths, as ["*/**"] and
+      ["**/*/*"] do, or neither question tells them apart. *)
 
-val specificity : t -> Specificity.t
-(** [specificity p] is the specificity of [p]. *)
+val specificity : t -> t -> specificity
+(** [specificity p q] compares [p] with [q] as described above.
+    [specificity p p] is [Ambiguous], and [specificity q p] is
+    [specificity p q] with [More_specific] and [Less_specific] swapped. *)
