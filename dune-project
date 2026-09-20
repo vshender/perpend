@@ -17,6 +17,9 @@
  (synopsis "Deterministic change-control layer for software architecture")
  (depends
   (ocaml (>= 5.4))
+  yojson
+  ppx_yojson_conv
+  ppx_yojson_conv_lib
   (alcotest :with-test)
   (qcheck-core (and (>= 0.90) :with-test))
   (qcheck-alcotest (and (>= 0.90) :with-test))))

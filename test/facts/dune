@@ -1,0 +1,9 @@
+(test
+ (name test_facts)
+ (libraries
+  perpend.core
+  perpend.facts
+  test_helpers
+  alcotest
+  qcheck-core
+  qcheck-alcotest))

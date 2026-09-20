@@ -1,6 +1,7 @@
 (** Tests for [Glob]. *)
 
 open Perpend_core
+open Test_helpers
 
 
 (** {1 Test helpers} *)

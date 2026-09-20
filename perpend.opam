@@ -9,6 +9,9 @@ bug-reports: "https://github.com/vshender/perpend/issues"
 depends: [
   "dune" {>= "3.0"}
   "ocaml" {>= "5.4"}
+  "yojson"
+  "ppx_yojson_conv"
+  "ppx_yojson_conv_lib"
   "alcotest" {with-test}
   "qcheck-core" {>= "0.90" & with-test}
   "qcheck-alcotest" {>= "0.90" & with-test}

@@ -1,0 +1,6 @@
+(library
+ (name perpend_facts)
+ (public_name perpend.facts)
+ (libraries perpend.core yojson ppx_yojson_conv_lib)
+ (preprocess
+  (pps ppx_yojson_conv)))

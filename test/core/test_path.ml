@@ -1,6 +1,7 @@
 (** Tests for [Path]. *)
 
 open Perpend_core
+open Test_helpers
 
 
 (** Test cases for [Path.of_string] on valid paths: they parse and split
