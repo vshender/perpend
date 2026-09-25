@@ -12,28 +12,6 @@ open Test_helpers
 let path_of_string s =
   Result.get_ok (Path.of_string s)
 
-(** [index_of s sub] is the position of the first [sub] in [s], if any. *)
-let index_of s sub =
-  let n = String.length s and m = String.length sub in
-  (* [occurs_at i j] is [true] iff [sub], from its character [j], occurs in [s]
-     at [i + j]. *)
-  let rec occurs_at i j =
-    j = m || (sub.[j] = s.[i + j] && occurs_at i (j + 1))
-  in
-  let rec find i =
-    if i + m > n then
-      None
-    else if occurs_at i 0 then
-      Some i
-    else
-      find (i + 1)
-  in
-  find 0
-
-(** [contains s sub] is [true] iff [sub] occurs in [s]. *)
-let contains s sub =
-  Option.is_some (index_of s sub)
-
 (** [file lines] is the JSONL text with [lines], each ended by a newline. *)
 let file lines =
   String.concat "" (List.map (fun l -> l ^ "\n") lines)
@@ -180,7 +158,7 @@ let fact =
 
 (** [damaged from to_] is [fact] with [from] replaced by [to_]. *)
 let damaged from to_ =
-  match index_of fact from with
+  match String.find_sub fact ~sub:from with
   | None   -> failwith (Printf.sprintf "%S not in the fact" from)
   | Some i ->
     let n = String.length fact and m = String.length from in
@@ -199,7 +177,7 @@ let invalid_tests =
          | Ok _    -> fail "should not parse"
          | Error e ->
            check int "line" line e.line;
-           if not (contains e.message part) then
+           if not (String.contains_sub e.message ~sub:part) then
              failf "%S not in %S" part e.message)
   in [
     invalid_test "empty input"

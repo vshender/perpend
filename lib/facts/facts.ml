@@ -291,21 +291,11 @@ let fail fmt =
 (** [after marker s] is the part of [s] after the first [marker], or [s] when
     [marker] does not occur in it. *)
 let after marker s =
-  let n = String.length s and m = String.length marker in
-  (* [occurs_at i j] is [true] iff [marker], from its character [j], occurs
-     in [s] at [i + j]. *)
-  let rec occurs_at i j =
-    j = m || (marker.[j] = s.[i + j] && occurs_at i (j + 1))
-  in
-  let rec find i =
-    if i + m > n then
-      s
-    else if occurs_at i 0 then
-      String.sub s (i + m) (n - i - m)
-    else
-      find (i + 1)
-  in
-  find 0
+  match String.find_sub s ~sub:marker with
+  | Some i ->
+    let n = String.length s and m = String.length marker in
+    String.sub s (i + m) (n - i - m)
+  | None -> s
 
 (** [take key fields] is the string value of [key] in the JSON object [fields]
     and the other fields, or a failure if [key] is missing, repeated or not a
