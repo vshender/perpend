@@ -16,7 +16,7 @@
  (name perpend)
  (synopsis "Deterministic change-control layer for software architecture")
  (depends
-  (ocaml (>= 5.4))
+  (ocaml (>= 5.5))
   (re (>= 1.7.2))
   (yaml (>= 3.0))
   yojson
