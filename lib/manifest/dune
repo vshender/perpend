@@ -1,0 +1,4 @@
+(library
+ (name perpend_manifest)
+ (public_name perpend.manifest)
+ (libraries perpend.core re yaml))

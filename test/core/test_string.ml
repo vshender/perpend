@@ -33,6 +33,6 @@ let search_tests =
 
 
 let () =
-  Alcotest.run "String" [
+  Alcotest.run ~compact:true "String" [
     ("search", search_tests);
   ]
