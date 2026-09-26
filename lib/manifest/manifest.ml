@@ -462,7 +462,7 @@ let module_of seen ~location { key_line; key; value = node } =
              if has_control s then
                fail ~line ~location "control characters are not allowed";
              let pattern =
-               match Glob.parse s with
+               match Glob.of_string s with
                | Ok p    -> p
                | Error e -> fail ~line ~location "invalid pattern: %s" e
              in

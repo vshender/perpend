@@ -9,7 +9,7 @@ open Test_helpers
 (** [parse_exn s] is [s] parsed as a pattern; it fails the test if [s] does
     not parse. *)
 let parse_exn s =
-  match Glob.parse s with
+  match Glob.of_string s with
   | Ok p    -> p
   | Error e -> failwith (Printf.sprintf "%s: %s" s e)
 
@@ -92,17 +92,36 @@ module Reference = struct
 end
 
 
-(** {1 parse} *)
+(** {1 equal} *)
 
-(** Test cases for the strings [Glob.parse] rejects. *)
-let parse_error_tests =
+(** Test cases for [Glob.equal]: patterns are equal iff they were parsed from
+    the same string. *)
+let equal_tests =
+  let open Alcotest in
+  let equal_test p q expected =
+    test_case
+      (Printf.sprintf "%S and %S" p q)
+      `Quick
+      (fun () ->
+         check bool "equal" expected (Glob.equal (parse_exn p) (parse_exn q)))
+  in [
+    equal_test "src/**" "src/**" true;
+    equal_test "src/**" "src/*" false;
+    equal_test "src/**" "src/**/**" false;
+  ]
+
+
+(** {1 of_string} *)
+
+(** Test cases for the strings that [Glob.of_string] rejects. *)
+let of_string_error_tests =
   let open Alcotest in
   let parse_error_test pattern =
     test_case
       (Printf.sprintf "%S is an error" pattern)
       `Quick
       (fun () ->
-         match Glob.parse pattern with
+         match Glob.of_string pattern with
          | Error _ -> ()
          | Ok _    -> failf "%S should not parse" pattern)
   in [
@@ -122,7 +141,7 @@ let parse_error_tests =
     from. *)
 let round_trip_test =
   Util.property_test
-    ~name:"to_string (parse s) = s for every pattern s"
+    ~name:"to_string (of_string s) = s for every pattern s"
     ~print:QCheck2.Print.string
     Generators.pattern
     (fun s -> Glob.to_string (parse_exn s) = s)
@@ -586,7 +605,8 @@ let inclusion_against_paths_test =
 let () =
   Alcotest.run ~compact:true "Glob"
     [
-      ("parse errors", parse_error_tests);
+      ("equal", equal_tests);
+      ("of_string errors", of_string_error_tests);
       ("round-trip", [round_trip_test]);
       ("matches", match_tests);
       ("pathological", pathological_tests);

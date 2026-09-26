@@ -33,13 +33,17 @@
 type t
 (** The type of a parsed pattern. *)
 
-val parse : string -> (t, string) result
-(** [parse s] parses the pattern [s].  A string that is not a pattern is an
+val equal : t -> t -> bool
+(** [equal p q] is [true] iff [p] and [q] were parsed from the same string.
+    Two patterns that match the same paths can still differ. *)
+
+val of_string : string -> (t, string) result
+(** [of_string s] is [s] as a pattern.  A string that is not a pattern is an
     [Error] with a message naming the problem. *)
 
 val to_string : t -> string
-(** [to_string p] is the string [p] was parsed from: if [parse s] is
-    [Ok p], then [to_string p] is [s]. *)
+(** [to_string p] is the string that [p] was parsed from: if [of_string s]
+    is [Ok p], then [to_string p] is [s]. *)
 
 
 (** {1 Matching} *)

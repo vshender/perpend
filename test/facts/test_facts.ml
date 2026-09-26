@@ -105,8 +105,8 @@ let error_testable =
 
 (** {1 Reading and writing} *)
 
-(** Test cases for the files [Facts.of_string] accepts. *)
-let valid_tests =
+(** Test cases for the files that [Facts.of_string] accepts. *)
+let of_string_tests =
   let open Alcotest in
   let valid_test name text =
     test_case
@@ -164,9 +164,9 @@ let damaged from to_ =
     let n = String.length fact and m = String.length from in
     String.sub fact 0 i ^ to_ ^ String.sub fact (i + m) (n - i - m)
 
-(** Test cases for the files [Facts.of_string] rejects: each names the line of
-    the error and a part of its message. *)
-let invalid_tests =
+(** Test cases for the files that [Facts.of_string] rejects: each names the line
+    of the error and a part of its message. *)
+let of_string_error_tests =
   let open Alcotest in
   let invalid_test name lines ~line ~contains:part =
     test_case
@@ -257,7 +257,7 @@ let invalid_tests =
       ~line:2 ~contains:"duplicate fields: path";
     invalid_test "file path not a path"
       [header; {|{"type":"file","path":"/a"}|}]
-      ~line:2 ~contains:"not a path: must not start with '/'";
+      ~line:2 ~contains:"invalid path: must not start with '/'";
     invalid_test "empty file language"
       [header; {|{"type":"file","path":"a","language":""}|}]
       ~line:2 ~contains:"empty language";
@@ -269,7 +269,7 @@ let invalid_tests =
       ~line:4 ~contains:"Unexpected end of input";
     invalid_test "subject not a path"
       [header; damaged {|"subject":"src/a.py"|} {|"subject":"src//a.py"|}]
-      ~line:2 ~contains:"not a path: empty segment";
+      ~line:2 ~contains:"invalid path: empty segment";
     invalid_test "unknown artifact kind"
       [header; damaged {|"kind":"file","id":"src/b.py"|} {|"kind":"module","id":"b"|}]
       ~line:2 ~contains:"unknown artifact kind: module";
@@ -515,8 +515,8 @@ let round_trip_test =
 let () =
   Alcotest.run ~compact:true "Facts"
     [
-      ("valid", valid_tests);
-      ("invalid", invalid_tests);
+      ("of_string", of_string_tests);
+      ("of_string errors", of_string_error_tests);
       ("error text", error_text_tests);
       ("vocabulary", vocabulary_tests);
       ("round-trip", [round_trip_test]);

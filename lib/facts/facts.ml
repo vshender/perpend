@@ -70,7 +70,7 @@ module Path = struct
   let t_of_yojson json =
     match of_string (string_of_yojson json) with
     | Ok p    -> p
-    | Error e -> invalid json "not a path: %s" e
+    | Error e -> invalid json "invalid path: %s" e
 
   (** [yojson_of_t p] is [p] as a JSON string. *)
   let yojson_of_t p =

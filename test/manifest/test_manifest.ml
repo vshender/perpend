@@ -9,7 +9,7 @@ open Manifest
 
 (** [pattern s] is the pattern [s]. *)
 let pattern s =
-  Result.get_ok (Glob.parse s)
+  Result.get_ok (Glob.of_string s)
 
 (** [id s] is the module id [s]. *)
 let id s =
@@ -74,9 +74,22 @@ let pp_manifest fmt t =
        in
        Format.fprintf fmt "%s: {%s}@\n" (Id.to_string m.id) contents)
 
+(** [contents_equal a b] is [true] iff [a] and [b] are the same contents. *)
+let contents_equal (a : Module.contents) (b : Module.contents) =
+  match a, b with
+  | Paths ps, Paths qs       -> List.equal Glob.equal ps qs
+  | Packages ps, Packages qs -> List.equal String.equal ps qs
+  | _                        -> false
+
+(** [module_equal a b] is [true] iff [a] and [b] are the same module. *)
+let module_equal (a : Module.t) (b : Module.t) =
+  Id.equal a.id b.id && contents_equal a.contents b.contents
+
 (** [Manifest.t] for Alcotest. *)
 let manifest_testable =
-  Alcotest.testable pp_manifest ( = )
+  Alcotest.testable
+    pp_manifest
+    (fun a b -> List.equal module_equal a.modules b.modules)
 
 (** [Manifest.error] for Alcotest. *)
 let error_testable =

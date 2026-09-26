@@ -33,6 +33,9 @@ type t = {
       adjacent, and no bare ["*"] segment is next to a [Globstar]. *)
 }
 
+let equal p q =
+  String.equal p.source q.source
+
 let to_string t =
   t.source
 
@@ -103,7 +106,7 @@ let normalize segments =
 
   segments |> at_least_one |> merge 0 false
 
-let parse source =
+let of_string source =
   let* path = Path.of_string source in
   let rec parse_all = function
     | []        -> Ok []
