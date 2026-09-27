@@ -17,6 +17,7 @@
  (synopsis "Deterministic change-control layer for software architecture")
  (depends
   (ocaml (>= 5.5))
+  (cmdliner (>= 2.0))
   (re (>= 1.7.2))
   (yaml (>= 3.0))
   yojson

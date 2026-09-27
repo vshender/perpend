@@ -1,0 +1,7 @@
+(tests
+ (names test_files test_which)
+ (libraries
+  perpend.core
+  perpend.manifest
+  perpend.cli
+  alcotest))

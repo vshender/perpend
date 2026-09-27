@@ -1,0 +1,4 @@
+(library
+ (name perpend_cli)
+ (public_name perpend.cli)
+ (libraries perpend.core perpend.manifest perpend.engine))

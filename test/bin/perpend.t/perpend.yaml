@@ -1,0 +1,7 @@
+version: 1
+modules:
+  core:   {paths: ['src/core/**']}
+  ui:     {paths: ['src/ui/**']}
+  styles: {paths: ['**/*.css']}
+  tests:  {paths: ['**/tests/**']}
+  orm:    {external: [sqlalchemy]}

@@ -1,0 +1,10 @@
+(executable
+ (name main)
+ (public_name perpend)
+ (libraries
+  perpend.core
+  perpend.manifest
+  perpend.cli
+  cmdliner
+  re
+  unix))
