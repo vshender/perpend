@@ -32,11 +32,11 @@ let example = [
   "modules:";
   "  core:";
   "    paths:";
-  "      - \"src/core/**\"";
+  "      - 'src/core/**'";
   "  core/api:";
   "    paths:";
-  "      - \"src/core/api/**\"";
-  "      - \"src/core/api.py\"";
+  "      - 'src/core/api/**'";
+  "      - 'src/core/api.py'";
   "  ext.orm:";
   "    external:";
   "      - sqlalchemy";
@@ -188,8 +188,8 @@ let of_string_tests =
       [
         "version: 1";
         "modules:";
-        "  core:     {paths: [\"src/core/**\"]}";
-        "  core/api: {paths: [\"src/core/api/**\", \"src/core/api.py\"]}";
+        "  core:     {paths: ['src/core/**']}";
+        "  core/api: {paths: ['src/core/api/**', 'src/core/api.py']}";
         "  ext.orm:  {external: [sqlalchemy, drizzle-orm]}";
       ]
       example_value;
@@ -200,7 +200,7 @@ let of_string_tests =
       example_value;
     reads_test "key order does not matter"
       [
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
         "version: 1";
       ]
       (manifest_of_pattern "src/**");
@@ -225,7 +225,7 @@ let of_string_tests =
     reads_test "a module of packages only"
       [
         "version: 1";
-        "modules: {m: {external: [\"@scope/name\", \"node:fs\"]}}";
+        "modules: {m: {external: ['@scope/name', 'node:fs']}}";
       ]
       {
         modules = [
@@ -248,7 +248,7 @@ let of_string_tests =
            "# the manifest"; "---";
            "version: 1";
            "modules:";
-           "  m: {paths: [\"src/**\"]}  # all of it";
+           "  m: {paths: ['src/**']}  # all of it";
          ]);
     valid_test "no final newline is fine"
       "version: 1\nmodules: {m: {paths: [x]}}";
@@ -256,13 +256,13 @@ let of_string_tests =
       (text
          [
            "version: 1\r";
-           "modules: {m: {paths: [\"src/**\"]}}\r";
+           "modules: {m: {paths: ['src/**']}}\r";
          ]);
     valid_test "an overlap between modules is not an error"
       (text
          [
            "version: 1";
-           "modules: {a: {paths: [\"src/**\"]}, b: {paths: [\"src/x/**\"]}}";
+           "modules: {a: {paths: ['src/**']}, b: {paths: ['src/x/**']}}";
          ]);
     valid_test "a pattern and a package with the same text"
       (text
@@ -362,19 +362,19 @@ let of_string_error_tests =
       [
         "version: 1";
         "modules:";
-        "  m: {paths: [\"src/**\"";
+        "  m: {paths: ['src/**'";
       ]
       ~line:3 ~at:"" ~contains:"did not find expected ',' or ']'";
     invalid_test "text after the root"
       [
-        "{version: 1, modules: {m: {paths: [\"src/**\"]}}}";
+        "{version: 1, modules: {m: {paths: ['src/**']}}}";
         "rules: []";
       ]
       ~line:2 ~at:"" ~contains:"did not find expected <document start>";
     invalid_test "a second document"
       [
         "version: 1";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
         "---";
         "version: 1";
       ]
@@ -382,7 +382,7 @@ let of_string_error_tests =
     invalid_test "an anchor"
       [
         "version: &v 1";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"anchors are not supported";
     invalid_test "an anchor under mixed nesting"
@@ -394,31 +394,31 @@ let of_string_error_tests =
     invalid_test "an anchor on a pattern"
       [
         "version: 1";
-        "modules: {m: {paths: [&p \"src/**\"]}}";
+        "modules: {m: {paths: [&p 'src/**']}}";
       ]
       ~line:2 ~at:"modules.m.paths[0]" ~contains:"anchors are not supported";
     invalid_test "a tag on a mapping"
       [
         "version: 1";
-        "modules: {m: !!map {paths: [\"src/**\"]}}";
+        "modules: {m: !!map {paths: ['src/**']}}";
       ]
       ~line:2 ~at:"modules.m" ~contains:"tags are not supported";
     invalid_test "an anchor on a mapping"
       [
         "version: 1";
-        "modules: &m {m: {paths: [\"src/**\"]}}";
+        "modules: &m {m: {paths: ['src/**']}}";
       ]
       ~line:2 ~at:"modules" ~contains:"anchors are not supported";
     invalid_test "a tag on a key"
       [
         "version: 1";
-        "modules: {!!str m: {paths: [\"src/**\"]}}";
+        "modules: {!!str m: {paths: ['src/**']}}";
       ]
       ~line:2 ~at:"modules" ~contains:"tags are not supported";
     invalid_test "an anchor on a key"
       [
         "version: 1";
-        "modules: {&m m: {paths: [\"src/**\"]}}";
+        "modules: {&m m: {paths: ['src/**']}}";
       ]
       ~line:2 ~at:"modules" ~contains:"anchors are not supported";
     invalid_test "an alias"
@@ -430,19 +430,19 @@ let of_string_error_tests =
     invalid_test "an alias as a key"
       [
         "version: 1";
-        "modules: {*m : {paths: [\"src/**\"]}}";
+        "modules: {*m : {paths: ['src/**']}}";
       ]
       ~line:2 ~at:"modules" ~contains:"aliases are not supported";
     invalid_test "a tag"
       [
         "version: !!int 1";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"tags are not supported";
     invalid_test "a tag on a list"
       [
         "version: 1";
-        "modules: {m: {paths: !!seq [\"src/**\"]}}";
+        "modules: {m: {paths: !!seq ['src/**']}}";
       ]
       ~line:2 ~at:"modules.m.paths" ~contains:"tags are not supported";
     invalid_test "a key that is not a scalar"
@@ -453,61 +453,61 @@ let of_string_error_tests =
       ~line:1 ~at:"" ~contains:"key must be a string";
     invalid_test "no version"
       [
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"" ~contains:{|missing key "version"|};
     invalid_test "version without a value"
       [
         "version:";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"must be a plain integer";
     invalid_test "version with a sign"
       [
         "version: +1";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"must be a plain integer";
     invalid_test "version as a string"
       [
-        "version: \"1\"";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "version: '1'";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"must be a plain integer";
     invalid_test "version as a float"
       [
         "version: 1.0";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"must be a plain integer";
     invalid_test "version as a list"
       [
         "version: [1]";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"must be a plain integer";
     invalid_test "version with a leading zero"
       [
         "version: 01";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"must be a plain integer";
     invalid_test "version zero"
       [
         "version: 0";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"unsupported version 0, expected 1";
     invalid_test "unsupported version"
       [
         "version: 2";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
       ]
       ~line:1 ~at:"version" ~contains:"unsupported version 2, expected 1";
     invalid_test "unsupported version before unknown keys"
       [
         "version: 2";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
         "rules: []";
       ]
       ~line:1 ~at:"version" ~contains:"unsupported version 2, expected 1";
@@ -519,14 +519,14 @@ let of_string_error_tests =
     invalid_test "unknown top-level key"
       [
         "version: 1";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
         "rules: []";
       ]
       ~line:3 ~at:"" ~contains:{|unknown key "rules"|};
     invalid_test "duplicate top-level key"
       [
         "version: 1";
-        "modules: {m: {paths: [\"src/**\"]}}";
+        "modules: {m: {paths: ['src/**']}}";
         "version: 1";
       ]
       ~line:3 ~at:"" ~contains:{|duplicate key "version"|};
@@ -546,33 +546,33 @@ let of_string_error_tests =
       [
         "version: 1";
         "modules:";
-        "  m: {paths: [\"src/**\"]}";
-        "  m: {paths: [\"lib/**\"]}";
+        "  m: {paths: ['src/**']}";
+        "  m: {paths: ['lib/**']}";
       ]
       ~line:4 ~at:"modules" ~contains:{|duplicate key "m"|};
     invalid_test "id with a control character"
       (modules "\"a\\tb\": {paths: [x]}")
       ~line:3 ~at:"modules.a\\tb" ~contains:"control characters are not allowed";
     invalid_test "id not an id"
-      (modules "/m: {paths: [\"src/**\"]}")
+      (modules "/m: {paths: ['src/**']}")
       ~line:3 ~at:"modules./m" ~contains:"invalid module id: empty segment";
     invalid_test "module not a mapping"
-      (modules "m: [\"src/**\"]")
+      (modules "m: ['src/**']")
       ~line:3 ~at:"modules.m" ~contains:"must be a mapping";
     invalid_test "unknown module key"
-      (modules "m: {paths: [\"src/**\"], family: true}")
+      (modules "m: {paths: ['src/**'], family: true}")
       ~line:3 ~at:"modules.m" ~contains:{|unknown key "family"|};
     invalid_test "neither paths nor external"
       (modules "m: {}")
       ~line:3 ~at:"modules.m" ~contains:{|"paths" or "external" expected|};
     invalid_test "both paths and external"
-      (modules "m: {paths: [\"src/**\"], external: [x]}")
+      (modules "m: {paths: ['src/**'], external: [x]}")
       ~line:3 ~at:"modules.m" ~contains:{|either "paths" or "external", not both|};
     invalid_test "paths not a list"
-      (modules "m: {paths: \"src/**\"}")
+      (modules "m: {paths: 'src/**'}")
       ~line:3 ~at:"modules.m.paths" ~contains:"must be a list";
     invalid_test "duplicate key in a module"
-      (modules "m: {paths: [\"src/**\"], paths: [\"lib/**\"]}")
+      (modules "m: {paths: ['src/**'], paths: ['lib/**']}")
       ~line:3 ~at:"modules.m" ~contains:{|duplicate key "paths"|};
     invalid_test "a control character in a pattern"
       (modules "m: {paths: [\"src/\\t\"]}")
@@ -584,20 +584,20 @@ let of_string_error_tests =
       (modules "m: {paths: []}")
       ~line:3 ~at:"modules.m.paths" ~contains:"at least one pattern expected";
     invalid_test "pattern not a string"
-      (modules "m: {paths: [[\"src/**\"]]}")
+      (modules "m: {paths: [['src/**']]}")
       ~line:3 ~at:"modules.m.paths[0]" ~contains:"must be a string";
     invalid_test "pattern not a pattern"
-      (modules "m: {paths: [\"src/***\"]}")
+      (modules "m: {paths: ['src/***']}")
       ~line:3 ~at:"modules.m.paths[0]" ~contains:"invalid pattern: '**' must be a whole segment";
     invalid_test "duplicate pattern"
-      (modules "m: {paths: [\"src/**\", \"lib/**\", \"src/**\"]}")
+      (modules "m: {paths: ['src/**', 'lib/**', 'src/**']}")
       ~line:3 ~at:"modules.m.paths[2]" ~contains:{|duplicate pattern "src/**"|};
     invalid_test "pattern of another module"
       [
         "version: 1";
         "modules:";
-        "  a: {paths: [\"src/**\"]}";
-        "  b: {paths: [\"src/**\"]}";
+        "  a: {paths: ['src/**']}";
+        "  b: {paths: ['src/**']}";
       ]
       ~line:4 ~at:"modules.b.paths[0]" ~contains:{|pattern "src/**" already in module "a"|};
     invalid_test "external not a list"
@@ -613,7 +613,7 @@ let of_string_error_tests =
       (modules "m: {external: [\"a\\nb\"]}")
       ~line:3 ~at:"modules.m.external[0]" ~contains:"control characters are not allowed";
     invalid_test "empty package name"
-      (modules "m: {external: [x, \"\"]}")
+      (modules "m: {external: [x, '']}")
       ~line:3 ~at:"modules.m.external[1]" ~contains:"empty package name";
     invalid_test "duplicate package"
       (modules "m: {external: [x, x]}")
@@ -632,8 +632,8 @@ let of_string_error_tests =
         "modules:";
         "  m:";
         "    paths:";
-        "      - \"src/**\"";
-        "      - \"src/**\"";
+        "      - 'src/**'";
+        "      - 'src/**'";
       ]
       ~line:6 ~at:"modules.m.paths[1]" ~contains:{|duplicate pattern "src/**"|};
   ]
@@ -656,6 +656,8 @@ let error_text_tests =
       "line 1: must be a mapping";
   ]
 
+
+(** {1 Test runner} *)
 
 let () =
   Alcotest.run ~compact:true "Manifest" [
