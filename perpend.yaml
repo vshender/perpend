@@ -1,0 +1,13 @@
+version: 1
+modules:
+  lib/core:     {paths: ['lib/core/**']}
+  lib/facts:    {paths: ['lib/facts/**']}
+  lib/manifest: {paths: ['lib/manifest/**']}
+  lib/engine:   {paths: ['lib/engine/**']}
+  lib/cli:      {paths: ['lib/cli/**']}
+  bin:          {paths: ['bin/**']}
+  test:         {paths: ['test/**']}
+  doc:          {paths: ['README.md', 'doc/**']}
+  infra/build:  {paths: ['**/dune', 'dune-project', 'perpend.opam']}
+  infra/ci:     {paths: ['.github/**']}
+  infra/repo:   {paths: ['.gitignore', 'LICENSE', 'perpend.yaml']}
