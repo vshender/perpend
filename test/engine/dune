@@ -1,3 +1,8 @@
-(test
- (name test_attribution)
- (libraries perpend.core perpend.manifest perpend.engine alcotest))
+(tests
+ (names test_attribution test_graph)
+ (libraries
+  perpend.core
+  perpend.facts
+  perpend.manifest
+  perpend.engine
+  alcotest))
