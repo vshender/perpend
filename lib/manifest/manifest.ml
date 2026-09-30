@@ -18,6 +18,8 @@ module Id = struct
   let equal =
     List.equal String.equal
 
+  let hash = Hashtbl.hash
+
   let of_string s =
     let segments = String.split_on_char '/' s in
     if List.mem "" segments then

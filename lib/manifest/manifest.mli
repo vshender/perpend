@@ -64,6 +64,10 @@ module Id : sig
   val equal : t -> t -> bool
   (** [equal a b] is [true] iff [a] and [b] are the same id. *)
 
+  val hash : t -> int
+  (** [hash id] is a hash of [id]: equal ids have equal hashes.  With [equal],
+      it lets a hash table use ids as keys, as [Hashtbl.Make] requires. *)
+
   val of_string : string -> (t, string) result
   (** [of_string s] is [s] as an id.  A string that is not an id is an [Error]
       with a message naming the problem. *)
