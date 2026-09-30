@@ -8,6 +8,13 @@
 type t
 (** The type of a validated path. *)
 
+val equal : t -> t -> bool
+(** [equal p q] is [true] iff [p] and [q] are the same path. *)
+
+val hash : t -> int
+(** [hash p] is a hash of [p]: equal paths have equal hashes.  With [equal], it
+    lets a hash table use paths as keys, as [Hashtbl.Make] requires. *)
+
 val of_string : string -> (t, string) result
 (** [of_string s] is [s] as a path.  A string that is not a path is an [Error]
     with a message naming the problem. *)

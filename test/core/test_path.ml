@@ -4,6 +4,10 @@ open Perpend_core
 open Test_helpers
 
 
+(** [path s] is the path [s]. *)
+let path s =
+  Result.get_ok (Path.of_string s)
+
 (** Test cases for [Path.of_string] on valid paths: they parse and split
     into the expected segments. *)
 let valid_tests =
@@ -49,6 +53,25 @@ let invalid_tests =
     invalid_test "a/.";
   ]
 
+(** Test cases for [Path.equal]. *)
+let equal_tests =
+  let open Alcotest in
+  let equal_test a b expected =
+    test_case
+      (Printf.sprintf "%S and %S are %sequal" a b
+         (if expected then "" else "not "))
+      `Quick
+      (fun () -> check bool "equal" expected (Path.equal (path a) (path b)))
+  in [
+    equal_test "a" "a" true;
+    equal_test "a" "b" false;
+    equal_test "src/a.py" "src/a.py" true;
+    equal_test "src/a.py" "src/b.py" false;
+    equal_test "src" "src/a.py" false;
+    equal_test "src/a.py" "src" false;
+    equal_test "src/a.py" "SRC/a.py" false;
+  ]
+
 (** Check that a path damaged in one of the ways [Path.of_string] rejects
     does not parse. *)
 let damaged_path_test =
@@ -88,6 +111,7 @@ let () =
     [
       ("valid", valid_tests);
       ("invalid", invalid_tests);
+      ("equal", equal_tests);
       ("damaged path", [damaged_path_test]);
       ("round-trip", [round_trip_test]);
       ("segments join", [segments_join_test]);

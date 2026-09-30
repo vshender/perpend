@@ -10,6 +10,12 @@ type t = {
   (** [source] split on ['/']. *)
 }
 
+let equal p q =
+  String.equal p.source q.source
+
+let hash t =
+  String.hash t.source
+
 (** [check_segment s] is an error iff [s] cannot be a segment of a path. *)
 let check_segment s =
   if s = "" then
