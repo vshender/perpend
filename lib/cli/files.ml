@@ -42,7 +42,7 @@ let report (manifest : Manifest.t) paths =
       (fun (path, verdict) ->
          match (verdict : Attribution.verdict) with
          | Ambiguous candidates ->
-           Some (Path.to_string path ^ ": " ^ Candidates.to_string candidates)
+           Some (Report.ambiguous_file path candidates)
          | Module _ | Unattributed -> None)
       verdicts
   in
