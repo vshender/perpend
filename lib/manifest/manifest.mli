@@ -68,6 +68,13 @@ module Id : sig
   (** [hash id] is a hash of [id]: equal ids have equal hashes.  With [equal],
       it lets a hash table use ids as keys, as [Hashtbl.Make] requires. *)
 
+  val is_under : ancestor:t -> t -> bool
+  (** [is_under ~ancestor id] is [true] iff [id] is [ancestor] itself or a
+      module under it: the segments of [ancestor] are the first segments of
+      [id].  An id counts as under itself, because naming a module means that
+      module and the modules under it.  So [core] and [core/api] are under
+      [core], and [core-api] is not: segments are compared whole. *)
+
   val of_string : string -> (t, string) result
   (** [of_string s] is [s] as an id.  A string that is not an id is an [Error]
       with a message naming the problem. *)

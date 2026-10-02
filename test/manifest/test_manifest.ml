@@ -153,6 +153,30 @@ let id_equal_tests =
     equal_test "core/api" "core/impl" false;
   ]
 
+(** Test cases for [Id.is_under]: each names the id, the ancestor and the
+    expected answer. *)
+let id_is_under_tests =
+  let open Alcotest in
+  let is_under_test s ancestor expected =
+    test_case
+      (Printf.sprintf "%S is %sunder %S" s
+         (if expected then "" else "not ") ancestor)
+      `Quick
+      (fun () ->
+         check bool "is_under"
+           expected (Id.is_under ~ancestor:(id ancestor) (id s)))
+  in [
+    is_under_test "core" "core" true;
+    is_under_test "core/api" "core" true;
+    is_under_test "core/api/v1" "core" true;
+    is_under_test "core/api/v1" "core/api" true;
+    is_under_test "core" "core/api" false;
+    is_under_test "core-api" "core" false;
+    is_under_test "core_system/engine" "core" false;
+    is_under_test "util/core" "core" false;
+    is_under_test "core/impl/api" "core/api" false;
+  ]
+
 
 (** {1 Reading} *)
 
@@ -663,6 +687,7 @@ let () =
   Alcotest.run ~compact:true "Manifest" [
     ("ids", id_tests);
     ("id equality", id_equal_tests);
+    ("id hierarchy", id_is_under_tests);
     ("of_string", of_string_tests);
     ("of_string errors", of_string_error_tests);
     ("error text", error_text_tests);

@@ -20,6 +20,12 @@ module Id = struct
 
   let hash = Hashtbl.hash
 
+  let rec is_under ~ancestor id =
+    match ancestor, id with
+    | [], _                  -> true
+    | _, []                  -> false
+    | a :: ancestor, s :: id -> String.equal a s && is_under ~ancestor id
+
   let of_string s =
     let segments = String.split_on_char '/' s in
     if List.mem "" segments then
