@@ -1,7 +1,9 @@
 (tests
- (names test_files test_which)
+ (names test_files test_graph test_which)
  (libraries
   perpend.core
   perpend.manifest
+  perpend.engine
   perpend.cli
+  test_helpers
   alcotest))

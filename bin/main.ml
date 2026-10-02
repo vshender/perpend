@@ -1,24 +1,34 @@
 (** The [perpend] command line. *)
 
 open Perpend_core
+open Perpend_facts
 open Perpend_manifest
 open Perpend_cli
 open Result.Syntax
 
+(** [read_file file] is the text of [file].  The error names the file. *)
+let read_file file =
+  try
+    if Sys.is_directory file then
+      Error (file ^ ": is a directory")
+    else
+      Ok (In_channel.with_open_bin file In_channel.input_all)
+  with
+    Sys_error message -> Error message
+
 (** [read_manifest file] is the manifest in [file].  The error names the file
     and, for a manifest error, the line. *)
 let read_manifest file =
-  let* text =
-    try
-      if Sys.is_directory file then
-        Error (file ^ ": is a directory")
-      else
-        Ok (In_channel.with_open_bin file In_channel.input_all)
-    with
-      Sys_error message -> Error message
-  in
+  let* text = read_file file in
   Manifest.of_string text |> Result.map_error
     (fun e -> file ^ ": " ^ Manifest.error_to_string e)
+
+(** [read_facts file] is the facts in [file].  The error names the file and, for
+    an error in a record, the line. *)
+let read_facts file =
+  let* text = read_file file in
+  Facts.of_string text |> Result.map_error
+    (fun e -> file ^ ": " ^ Facts.error_to_string e)
 
 (** [paths_of_strings strings] is [strings] as paths, or an error naming the
     first string that is not a path and the problem. *)
@@ -96,6 +106,33 @@ let which manifest_file path =
     print_string (Which.report manifest path)
   end
 
+(** [ids_of_arguments strings] is [strings] as module ids, or an error that
+    quotes the first string that is not an id and names the problem. *)
+let rec ids_of_arguments = function
+  | []            -> Ok []
+  | first :: rest ->
+    let* id =
+      Manifest.Id.of_string first
+      |> Result.map_error (Printf.sprintf "invalid module id '%s': %s" first)
+    in
+    let+ ids = ids_of_arguments rest in
+    id :: ids
+
+(** [graph manifest_file facts_file hide] runs [perpend graph] with the facts in
+    [facts_file].  [hide] is the values of the [--hide] options: the ids of the
+    modules to hide, as strings.  They are checked first, before any file is
+    read. *)
+let graph manifest_file facts_file hide =
+  finish begin
+    let* hide = ids_of_arguments hide in
+    let* manifest = read_manifest manifest_file in
+    let* facts = read_facts facts_file in
+    let+ report =
+      Graph.report ~hide (Perpend_engine.Graph.create manifest facts)
+    in
+    print_string report
+  end
+
 
 (** {1 Command line} *)
 
@@ -148,7 +185,52 @@ let which_cmd =
     (Cmd.info "which" ~doc ~exits)
     Term.(const which $ manifest_arg $ path_arg)
 
+(** [perpend graph]. *)
+let graph_cmd =
+  let doc = "show the dependencies between the modules" in
+  let exits =
+    exit_codes
+      "on an error in the manifest, in the facts or in a $(b,--hide) option."
+  in
+  let facts_arg =
+    let doc =
+      "The facts to read: the JSONL file that a provider printed for this \
+       repository."
+    in
+    Arg.(
+      required
+      & opt (some string) None
+      & info ["f"; "facts"] ~docv:"FILE" ~doc)
+  and hide_arg =
+    let doc =
+      "Leave the module $(docv) and the modules under it out of the report, \
+       with their dependencies and the dependencies on them.  $(b,--hide \
+       infra) hides infra and infra/ci.  The option can be repeated.  It is \
+       an error when $(docv) hides no module."
+    in
+    Arg.(value & opt_all string [] & info ["hide"] ~docv:"ID" ~doc)
+  in
+  let man = [
+    `S Manpage.s_description;
+    `P
+      "Prints a line for every module, in the order of the manifest, and \
+       under it a line for every module that it depends on, with the number \
+       of facts.";
+    `P
+      "Then it lists the files that belong to no module or to several, and \
+       gives the number of packages that no module lists and the number of \
+       imports that the provider could not follow.  The facts about such \
+       files and packages are missing from the graph.  The last line gives \
+       the number of modules, of dependencies and of facts.";
+    `P
+      "Files, packages and imports of this kind are not an error: the exit \
+       code is still 0.";
+  ] in
+  Cmd.v
+    (Cmd.info "graph" ~doc ~exits ~man)
+    Term.(const graph $ manifest_arg $ facts_arg $ hide_arg)
+
 let () =
   let doc = "deterministic change control for software architecture" in
   let info = Cmd.info "perpend" ~doc ~exits:(exit_codes "on an error.") in
-  exit (Cmd.eval' (Cmd.group info [files_cmd; which_cmd]))
+  exit (Cmd.eval' (Cmd.group info [files_cmd; which_cmd; graph_cmd]))

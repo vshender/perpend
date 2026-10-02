@@ -3,7 +3,9 @@
  (public_name perpend)
  (libraries
   perpend.core
+  perpend.facts
   perpend.manifest
+  perpend.engine
   perpend.cli
   cmdliner
   re
