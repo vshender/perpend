@@ -1,3 +1,3 @@
 (library
  (name test_helpers)
- (libraries perpend.core qcheck-core qcheck-alcotest))
+ (libraries perpend.core perpend.facts qcheck-core qcheck-alcotest))

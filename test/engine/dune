@@ -5,4 +5,5 @@
   perpend.facts
   perpend.manifest
   perpend.engine
+  test_helpers
   alcotest))
