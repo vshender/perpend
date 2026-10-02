@@ -4,20 +4,6 @@ open Perpend_core
 open Perpend_manifest
 open Perpend_engine
 
-(** [count n word] is [n] and [word], with the plural [s] when [n] is not one:
-    ["1 file"], ["2 files"]. *)
-let count n word =
-  if n = 1 then
-    Printf.sprintf "%d %s" n word
-  else
-    Printf.sprintf "%d %ss" n word
-
-(** [section name lines] is a header with [name] and the number of [lines],
-    then [lines], each indented by two spaces. *)
-let section name lines =
-  Printf.sprintf "%s (%s)\n" name (count (List.length lines) "file")
-  ^ String.concat "" (List.map (Printf.sprintf "  %s\n") lines)
-
 (** [module_section verdicts m] is the section of [m]: the paths that belong
     to it. *)
 let module_section verdicts (m : Manifest.Module.t) =
@@ -30,7 +16,7 @@ let module_section verdicts (m : Manifest.Module.t) =
          | Module _ | Unattributed | Ambiguous _ -> None)
       verdicts
   in
-  section (Manifest.Id.to_string m.id) files
+  Report.section (Manifest.Id.to_string m.id) files
 
 let report (manifest : Manifest.t) paths =
   let attribution = Attribution.create manifest in
@@ -62,7 +48,7 @@ let report (manifest : Manifest.t) paths =
   in
   let summary =
     Printf.sprintf "%s, %d unattributed, %d ambiguous\n"
-      (count (List.length verdicts) "file")
+      (Report.count (List.length verdicts) "file")
       (List.length unattributed)
       (List.length ambiguous)
   in
@@ -70,7 +56,7 @@ let report (manifest : Manifest.t) paths =
     (List.map (module_section verdicts) modules
      @
      [
-       section "unattributed" unattributed;
-       section "ambiguous" ambiguous;
+       Report.section "unattributed" unattributed;
+       Report.section "ambiguous" ambiguous;
        summary;
      ])
