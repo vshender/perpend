@@ -6,6 +6,7 @@ modules:
   lib/engine:   {paths: ['lib/engine/**']}
   lib/cli:      {paths: ['lib/cli/**']}
   bin:          {paths: ['bin/**']}
+  providers:    {paths: ['providers/**']}
   test:         {paths: ['test/**']}
   doc:          {paths: ['README.md', 'doc/**']}
   infra/build:  {paths: ['**/dune', 'dune-project', 'perpend.opam']}

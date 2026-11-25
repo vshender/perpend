@@ -53,7 +53,7 @@ module, then the numbers of unlisted packages and unresolved imports, then the
 summary.
 
   $ cat > facts.jsonl <<EOF
-  > {"type":"provider","protocol":"perpend.facts/1","name":"py-grimp","version":"0.1","languages":["python"],"capabilities":["file_imports","package_imports","unresolved"]}
+  > {"type":"provider","protocol":"perpend.facts/1","name":"python","version":"0.1","languages":["python"],"capabilities":["file_imports","package_imports","unresolved"]}
   > {"type":"fact","subject":"src/ui/b.py","object":{"kind":"file","id":"src/core/a.py"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":1}}
   > {"type":"fact","subject":"src/ui/b.py","object":{"kind":"file","id":"src/core/a.py"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":2}}
   > {"type":"fact","subject":"src/core/a.py","object":{"kind":"package","id":"sqlalchemy"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":3}}

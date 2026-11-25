@@ -5,7 +5,7 @@ open Perpend_facts
 
 (** The header of a facts file from a provider with every capability. *)
 let header =
-  {|{"type":"provider","protocol":"perpend.facts/1","name":"py-grimp","version":"0.1","languages":["python"],"capabilities":["file_imports","imported_names","package_imports","unresolved","context_flags","file_inventory"]}|}
+  {|{"type":"provider","protocol":"perpend.facts/1","name":"python","version":"0.1","languages":["python"],"capabilities":["file_imports","imported_names","package_imports","unresolved","context_flags","file_inventory"]}|}
 
 (** [file path] is a file record for [path]. *)
 let file path =

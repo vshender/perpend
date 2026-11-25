@@ -1,0 +1,32 @@
+{"type":"provider","protocol":"perpend.facts/1","name":"python","version":"0.1","languages":["python"],"capabilities":["file_imports","imported_names","package_imports","unresolved","context_flags","file_inventory"]}
+{"type":"file","path":"src/app/__init__.py","language":"python"}
+{"type":"file","path":"src/app/core/__init__.py","language":"python"}
+{"type":"file","path":"src/app/core/models.py","language":"python"}
+{"type":"file","path":"src/app/core/storage.py","language":"python"}
+{"type":"file","path":"src/app/plugins/__init__.py","language":"python"}
+{"type":"file","path":"src/app/plugins/default.py","language":"python"}
+{"type":"file","path":"src/app/web/__init__.py","language":"python"}
+{"type":"file","path":"src/app/web/render.py","language":"python"}
+{"type":"file","path":"src/app/web/views.py","language":"python"}
+{"type":"fact","subject":"src/app/core/models.py","object":{"kind":"package","id":"json"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":1,"text":"import json"}}
+{"type":"fact","subject":"src/app/core/models.py","object":{"kind":"package","id":"dataclasses"},"precision":"syntactic","names":["dataclass"],"flags":[],"evidence":{"line":2,"text":"from dataclasses import dataclass"}}
+{"type":"fact","subject":"src/app/core/storage.py","object":{"kind":"file","id":"src/app/core/models.py"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":1,"text":"from . import models"}}
+{"type":"fact","subject":"src/app/core/storage.py","object":{"kind":"file","id":"src/app/core/models.py"},"precision":"syntactic","names":["Model"],"flags":[],"evidence":{"line":2,"text":"from .models import Model"}}
+{"type":"fact","subject":"src/app/core/storage.py","object":{"kind":"package","id":"yaml"},"precision":"syntactic","names":[],"flags":["guarded"],"evidence":{"line":5,"text":"import yaml"}}
+{"type":"fact","subject":"src/app/plugins/__init__.py","object":{"kind":"package","id":"importlib"},"precision":"syntactic","names":["import_module"],"flags":[],"evidence":{"line":1,"text":"from importlib import import_module"}}
+{"type":"fact","subject":"src/app/plugins/default.py","object":{"kind":"file","id":"src/app/core/models.py"},"precision":"syntactic","names":["Model"],"flags":[],"evidence":{"line":1,"text":"from app.core.models import Model"}}
+{"type":"fact","subject":"src/app/plugins/default.py","object":{"kind":"package","id":"html"},"precision":"syntactic","names":[],"flags":["dynamic"],"evidence":{"line":3,"text":"escape = __import__(\"html\").escape"}}
+{"type":"fact","subject":"src/app/web/render.py","object":{"kind":"file","id":"src/app/core/models.py"},"precision":"syntactic","names":["Model"],"flags":[],"evidence":{"line":1,"text":"from app.core.models import Model"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"package","id":"importlib"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":1,"text":"import importlib"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"package","id":"typing"},"precision":"syntactic","names":["TYPE_CHECKING"],"flags":[],"evidence":{"line":2,"text":"from typing import TYPE_CHECKING"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/app/core/models.py"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":4,"text":"from app.core import models, storage"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/app/core/storage.py"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":4,"text":"from app.core import models, storage"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/app/core/models.py"},"precision":"syntactic","names":["Model"],"flags":[],"evidence":{"line":5,"text":"from app.core.models import Model"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/helpers/__init__.py"},"precision":"syntactic","names":["slug"],"flags":[],"evidence":{"line":6,"text":"from helpers import slug, text"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/helpers/text.py"},"precision":"syntactic","names":[],"flags":[],"evidence":{"line":6,"text":"from helpers import slug, text"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/app/web/render.py"},"precision":"syntactic","names":["Renderer"],"flags":["type_only"],"evidence":{"line":9,"text":"from app.web.render import Renderer"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/app/plugins/default.py"},"precision":"syntactic","names":[],"flags":["lazy"],"evidence":{"line":13,"text":"from app.plugins import default"}}
+{"type":"fact","subject":"src/app/web/views.py","object":{"kind":"file","id":"src/app/plugins/default.py"},"precision":"syntactic","names":[],"flags":["lazy","dynamic"],"evidence":{"line":23,"text":"return importlib.import_module(\"app.plugins.default\")"}}
+{"type":"unresolved","subject":"src/app/plugins/__init__.py","target":"app.plugins.missing","evidence":{"line":6,"text":"return import_module(\"app.plugins.missing\")"}}
+{"type":"unresolved","subject":"src/app/plugins/__init__.py","target":"importlib.import_module(...)","evidence":{"line":7,"text":"return import_module(name)"}}
+{"type":"unresolved","subject":"src/app/web/views.py","target":"importlib.import_module(...)","evidence":{"line":21,"text":"return importlib.import_module(\"app.plugins.\" + text.shorten(name))"}}

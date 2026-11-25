@@ -1,0 +1,61 @@
+[project]
+name = "perpend-provider-python"
+description = "Perpend facts provider for Python code"
+readme = "README.md"
+license = "ISC"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Vadzim Shender", email = "vadzim@shender.org" },
+]
+requires-python = ">=3.14"
+dependencies = []
+dynamic = ["version"]
+
+[project.scripts]
+perpend-provider-python = "perpend_provider_python.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/perpend_provider_python/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/perpend_provider_python"]
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.39",
+    "mypy>=1.20",
+    "pytest>=8.0",
+    "ruff>=0.15",
+]
+
+[tool.ruff]
+target-version = "py314"
+# The fixture is test data, not code to check.
+extend-exclude = ["tests/fixture"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 80
+
+[tool.basedpyright]
+include = ["src", "tests"]
+exclude = ["tests/fixture"]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
+
+[tool.mypy]
+files = ["src", "tests"]
+mypy_path = ["src"]
+exclude = ["tests/fixture"]
+python_version = "3.14"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

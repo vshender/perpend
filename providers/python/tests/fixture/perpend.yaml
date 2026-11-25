@@ -1,0 +1,8 @@
+version: 1
+modules:
+  app:     {paths: ['src/app/__init__.py']}
+  core:    {paths: ['src/app/core/**']}
+  web:     {paths: ['src/app/web/**']}
+  plugins: {paths: ['src/app/plugins/**']}
+  helpers: {paths: ['src/helpers/**']}
+  broken:  {paths: ['src/broken/**']}

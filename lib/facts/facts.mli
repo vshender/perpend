@@ -76,35 +76,38 @@ module Precision : sig
   (** [to_string p] is the JSON name of [p]. *)
 end
 
-(** Properties of the place where an import is written that tell how the
-    dependency behaves at run time.
+(** Properties of an import besides its target: for example, when it runs or
+    how it is written.
 
-    Several flags can apply at once: an import inside a function inside a [try]
-    block is both lazy and guarded.  Rules can ignore facts by flag. *)
+    Several flags can apply at once: for example, an import inside a function
+    under [if TYPE_CHECKING:] is both type-only and lazy.  Rules can ignore
+    facts by flag. *)
 module Flag : sig
   (** The type of flags. *)
   type t =
     | Type_only
-    (** The dependency exists for the type checker only and is erased before the
-        program runs.
+    (** The dependency exists for the type checker only: the import does not run
+        when the program runs.
 
         - Python: an import under [if TYPE_CHECKING:].
-        - TypeScript: [import type], or an import that only types use. *)
+        - TypeScript: [import type]. *)
     | Lazy
-    (** The import runs when the code around it runs, not when the module loads.
+    (** The import is in code that runs only when something uses it, such as
+        a function body.  So the file may load without the import.
 
         - Python: an import inside a function body.
         - JavaScript: [require()] or [import()] inside a function body. *)
     | Guarded
-    (** The import is inside a [try] block, so the code can handle a missing
-        target.
+    (** The import runs inside the body of a [try] that has a handler, so the
+        code may handle a failed import.
 
         - Python: [try:] around the import.
         - JavaScript: [try] around [require()]. *)
     | Dynamic
-    (** The import is an expression, not a declaration, so the target is chosen
-        when the code runs.  An import whose target is not a literal is not a
-        fact but an unresolved record.
+    (** The import is an expression, such as a function call, not an import
+        statement or declaration.  When the provider cannot tell the target, for
+        example because the argument is not a literal, it reports an unresolved
+        record instead of a fact.
 
         - Python: [importlib.import_module] with a literal argument.
         - JavaScript: [import()]. *)
@@ -156,7 +159,7 @@ module Provider : sig
       ["protocol"], which must be ["perpend.facts/1"]. *)
   type t = {
     name : string;
-    (** The provider's name, such as ["py-grimp"].  Non-empty. *)
+    (** The provider's name, such as ["python"].  Non-empty. *)
     version : string;
     (** The provider's version, such as ["0.1"].  Non-empty; it goes into the
         provenance of every decision. *)

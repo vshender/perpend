@@ -18,7 +18,7 @@ let file lines =
 
 (** The header of a file from a provider with every capability. *)
 let header =
-  {|{"type":"provider","protocol":"perpend.facts/1","name":"py-grimp","version":"0.1","languages":["python"],"capabilities":["file_imports","imported_names","package_imports","unresolved","context_flags","file_inventory"]}|}
+  {|{"type":"provider","protocol":"perpend.facts/1","name":"python","version":"0.1","languages":["python"],"capabilities":["file_imports","imported_names","package_imports","unresolved","context_flags","file_inventory"]}|}
 
 (** A file with records of every kind, as [Facts.to_string] prints it. *)
 let example =
@@ -47,7 +47,7 @@ let interleaved =
 let example_value =
   let a = path_of_string "src/a.py" and b = path_of_string "src/b.py" in {
     Facts.provider = {
-      name = "py-grimp";
+      name = "python";
       version = "0.1";
       languages = ["python"];
       capabilities = [
@@ -149,7 +149,7 @@ let of_string_tests =
     valid_test "no final newline is fine" header;
     valid_test "a Windows newline is fine" (header ^ "\r\n");
     valid_test "field order does not matter"
-      {|{"name":"py-grimp","type":"provider","capabilities":[],"languages":[],"protocol":"perpend.facts/1","version":"0.1"}|};
+      {|{"name":"python","type":"provider","capabilities":[],"languages":[],"protocol":"perpend.facts/1","version":"0.1"}|};
   ]
 
 (** A fact with every field, to damage in the invalid tests. *)
