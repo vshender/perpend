@@ -1,5 +1,5 @@
 (** Facts are what a provider found in the repository.  They travel as a JSONL
-    file: the provider prints it, the core reads it.
+    file: the provider prints it, and Perpend reads it.
 
     A provider is an external process that scans the code.  Its output has one
     JSON object per line:
@@ -59,10 +59,10 @@ module Precision : sig
   type t =
     | Syntactic
     (** The provider read the import and looked the target up by name: for
-        example, [utils.text] as [utils/text.py] under the source roots.  Fast
-        and needs no build, but it can be wrong when the name fits several
-        places or the import path is unusual; the provider's source roots are
-        the setting to adjust then. *)
+        example, [utils.text] as [utils/text.py] under the directories where
+        the provider looks for modules.  Fast and needs no build, but it can be
+        wrong when the name fits several places or the import path is unusual;
+        the list of those directories is the setting to adjust then. *)
     | Resolved
     (** The language's own module resolver found the target, the one that the
         compiler or the bundler uses, with its path aliases and package lookups:
@@ -238,8 +238,10 @@ module Unresolved : sig
   }
 end
 
-(** The whole facts file.  Each list keeps the order in which the provider
-    printed those records; the order between kinds is not kept. *)
+(** The whole facts file.  After the header, a provider may print the records
+    of different kinds in any order.  Each list keeps the order in which the
+    provider printed the records of its kind; the order between records of
+    different kinds is not kept. *)
 type t = {
   provider : Provider.t;
   (** The header. *)
@@ -269,9 +271,18 @@ val error_to_string : error -> string
 (** [error_to_string e] is [e] as one line: ["line 12: ..."]. *)
 
 val of_string : string -> (t, error) result
-(** [of_string s] reads the JSONL text [s].  Reading stops at the first line
-    that does not parse; then the header and the file records are checked, and
-    the error names the line of the record at fault.
+(** [of_string s] reads the JSONL text [s] in two passes and gives the first
+    error that it finds:
+
+    - the first pass reads every line as a record and checks its fields;
+    - the second pass checks the records against each other: the header must
+      be the first record and the only header, and no two file records may
+      have the same path.
+
+    So an invalid line anywhere in the text is reported before a missing
+    header.  The error names the line of the record at fault.
+
+    The rules for the text:
 
     - The text must be UTF-8.
     - Every line must be one JSON object with a ["type"]; a blank line is an
@@ -288,4 +299,5 @@ val to_string : t -> string
       value always prints the same bytes.
 
     The writer does not check [t].  When [t] respects the constraints documented
-    above, [of_string (to_string t)] is [Ok t]. *)
+    above and every string in it is valid UTF-8, [of_string (to_string t)] is
+    [Ok t]. *)
