@@ -9,6 +9,6 @@ modules:
   providers:    {paths: ['providers/**']}
   test:         {paths: ['test/**']}
   doc:          {paths: ['README.md', 'doc/**']}
-  infra/build:  {paths: ['**/dune', 'dune-project', 'perpend.opam']}
+  infra/build:  {paths: ['**/dune', 'dune-project', 'perpend.opam', 'Makefile']}
   infra/ci:     {paths: ['.github/**']}
   infra/repo:   {paths: ['.gitignore', 'LICENSE', 'perpend.yaml']}
